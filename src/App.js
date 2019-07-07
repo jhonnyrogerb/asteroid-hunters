@@ -1,22 +1,18 @@
 import React from "react";
-import { connect } from "react-redux";
-import {HashRouter, Redirect, Route, Switch} from "react-router-dom";
-import Home from "~/containers/Home/Home";
+import Routes from "./routes";
+import store from './store';
+import { Provider } from 'react-redux'
+
+window.store = store;
 
 const App = () => {
   return (
-    <HashRouter>
-      <Switch>
-        <Route path={'/home'} component={Home}/>
-        <Redirect to={'/home'} />
-      </Switch>
-    </HashRouter>
+    <Provider store={store}>
+      <Routes />
+    </Provider>
   );
 };
 
-const mapStateToProps = store => {
-  return { store }
-};
 
-export default connect(mapStateToProps)(App);
+export default App;
 

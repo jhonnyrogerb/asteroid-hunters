@@ -1,0 +1,67 @@
+const app = require('../app');
+const debug = require('debug')('app:initialization');
+const http = require('http');
+const mongo = require('../mongo');
+
+// normalize port
+const normalizePort = (val) => {
+  const port = parseInt(val, 10);
+
+  if (Number.isNaN(port)) return val;
+  if (port >= 0) return port;
+  return false;
+};
+
+// server init
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+const server = http.createServer(app);
+
+// error handler
+const onError = (error) => {
+  if (error.syscall !== 'listen') throw error;
+
+  const bind = typeof port === 'string'
+    ? `Pipe ${port}`
+    : `Port ${port}`;
+
+  switch (error.code) {
+    case 'EACCES':
+      debug(`${bind} requires elevated privileges`);
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      debug(`${bind} is already in use`);
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
+
+// success handler
+const onListening = () => {
+  const addr = server.address();
+  const bind = typeof addr === 'string'
+    ? `pipe ${addr}`
+    : `port ${addr.port}`;
+  debug(`Listening on ${bind}`);
+};
+
+//mongo connection and server initialization
+(async () => {
+  try {
+    await mongo.connect('mongodb://localhost:27017/admin');
+    process.env.PROXY_ONLY_MODE = false;
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  } catch (err) {
+    debug('Unable to connect to Mongo, initializing proxy only mode %O', err);
+    process.env.PROXY_ONLY_MODE = true;
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  }
+})()
+

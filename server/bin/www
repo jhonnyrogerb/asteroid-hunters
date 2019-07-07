@@ -51,7 +51,15 @@ const onListening = () => {
 //mongo connection and server initialization
 (async () => {
   try {
-    await mongo.connect('mongodb://localhost:27017/admin');
+    const {
+      MONGO_HOST,
+      MONGO_PORT,
+      MONGO_USER,
+      MONGO_PASSWORD,
+      MONGO_DEFAULT_DB
+    } = process.env;
+
+    await mongo.connect(`mongodb${!MONGO_PORT ? `+srv` : ''}://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}${MONGO_PORT ? `:${MONGO_PORT}` : ''}/${MONGO_DEFAULT_DB}?retryWrites=true&w=majority`);
     process.env.PROXY_ONLY_MODE = false;
     server.listen(port);
     server.on('error', onError);

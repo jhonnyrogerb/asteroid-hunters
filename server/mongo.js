@@ -5,13 +5,16 @@ let client = null
 exports.connect = async url => {
     try {
         if (client) return;
+        
+        console.log(url)
 
         const connection = await MongoClient.connect(url, {
             poolSize: 10,
             autoReconnect: true,
             reconnectTries: Number.MAX_VALUE,
             reconnectInterval: 1000,
-            bufferMaxEntries: 0
+            bufferMaxEntries: 0,
+            useNewUrlParser: true 
         })
 
         client = connection

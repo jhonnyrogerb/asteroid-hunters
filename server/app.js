@@ -12,6 +12,8 @@ const { config } = require('dotenv')
 const webpackConfig = require('../webpack.config');
 
 config();
+process.env.API_KEY ? process.env.API_KEY : process.env.API_KEY = 'DEMO_KEY';
+
 const app = express();
 
 if (process.env.NODE_ENV !== 'production') {
@@ -31,10 +33,8 @@ app.use(lusca.xssProtection(true));
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'dist')));
 
-const indexRouter = require('./routers/index');
-const usersRouter = require('./routers/users');
+const feedRouter = require('./routers/feed.router');
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/feed', feedRouter);
 
 module.exports = app;

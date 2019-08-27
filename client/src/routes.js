@@ -2,7 +2,7 @@ import React from "react";
 import {HashRouter, Redirect, Route, Switch} from "react-router-dom";
 
 import Home from "~/containers/Home/Home";
-import Feed from "./containers/Feed/Feed";
+import Feed from "./containers/Feed";
 
 const Routes = () => {
   return (

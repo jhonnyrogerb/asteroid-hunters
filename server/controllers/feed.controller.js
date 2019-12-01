@@ -1,33 +1,34 @@
 const debug = require('debug')('app:feed.controller');
-const { validationResult } = require('express-validator');
+const axios = require('axios');
+const {validationResult} = require('express-validator');
 
-const { neoClient } = require('../client')
+const {neoClient} = require('../client')
 
 const getNeoTodayFeed = async (req, res) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        const { API_KEY } = process.env
+        const {API_KEY} = process.env
 
-        const { data, status } = await neoClient.get(`/feed/today?detailed=true&api_key=${API_KEY}`);
+        const {data, status} = await neoClient.get(`/feed/today?detailed=true&api_key=${API_KEY}`);
 
         res.status(200).json(data);
     } catch (err) {
         debug('%O', err);
-        res.status(err.statusCode || 500).json({ errors: err.message.toString() || "Internal server error" });
+        res.status(err.statusCode || 500).json({errors: err.message.toString() || "Internal server error"});
     }
 };
 
 const getNeoFeed = async (req, res) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
 
-        const { API_KEY } = process.env
-        const { startDate, endDate } = req.query;
+        const {API_KEY} = process.env
+        const {startDate, endDate} = req.query;
 
-        const { data } = await neoClient.get(`/feed?start_date=${startDate}&end_date=${endDate}&detailed=true&api_key=${API_KEY}`);
+        const {data} = await neoClient.get(`/feed?start_date=${startDate}&end_date=${endDate}&detailed=true&api_key=${API_KEY}`);
 
         let feed = [];
         Object
@@ -37,7 +38,7 @@ const getNeoFeed = async (req, res) => {
         res.status(200).json(feed);
     } catch (err) {
         console.log('%O', err);
-        res.status(err.statusCode || 500).json({ errors: err.message.toString() || "Internal server error" });
+        res.status(err.statusCode || 500).json({errors: err.message.toString() || "Internal server error"});
     }
 };
 
@@ -75,9 +76,10 @@ const normalizeFeed = feed => {
             metric: closeApproachData.miss_distance.kilometers,
             imperial: closeApproachData.miss_distance.miles
         },
-        orbitingBody: closeApproachData.orbiting_body
+        orbitingBody: closeApproachData.orbiting_body,
+        orbitalData: feed.orbital_data
     }
-}
+};
 
 const getAsteroidSizeImage = (lunarDistance, asteroidSize) => {
     let image = '';
@@ -95,10 +97,9 @@ const getAsteroidSizeImage = (lunarDistance, asteroidSize) => {
         image = 'Scraper';
     } else if (asteroidSize > 600 && asteroidSize <= 1000) {
         image = 'Arenas';
-    } else if (asteroidSize >  1000) {
+    } else if (asteroidSize > 1000) {
         image = 'Mountain';
     }
-
 
     let color = '';
     if (lunarDistance <= 3) {
@@ -123,4 +124,4 @@ const getAsteroidSizeImage = (lunarDistance, asteroidSize) => {
 module.exports = {
     getNeoTodayFeed,
     getNeoFeed
-}
+};

@@ -6,9 +6,9 @@ const feedVldt = require('../middlewares/feed-validator.middleware')
 const router = express.Router();
 
 router.route('/')
-  .get(feedVldt.getNeoFeedValidator, feedCtrl.getNeoFeed);
+    .get(feedVldt.getNeoFeedValidator, feedCtrl.getNeoFeed);
 
 router.route('/today')
-  .get(feedCtrl.getNeoTodayFeed);
+    .get(feedCtrl.getNeoTodayFeed);
 
 module.exports = router;

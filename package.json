@@ -18,7 +18,7 @@
     "debug": "~2.6.9",
     "decimal.js": "^10.2.0",
     "dotenv": "^8.0.0",
-    "express": "~4.16.1",
+    "express": "~4.17.3",
     "express-validator": "^6.1.1",
     "lusca": "^1.6.1",
     "moment": "^2.24.0",
